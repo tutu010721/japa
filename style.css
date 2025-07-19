@@ -1,68 +1,79 @@
-/* style.css */
+/* Estilos Gerais */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
-    background-color: #f4f4f4;
-    color: #333;
-}
-
-.header {
-    background-color: #c0392b; /* Um tom de vermelho escuro, comum em temas de comida */
-    color: white;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.header h1 {
-    margin: 0;
+    background-color: #f8f9fa; /* Um branco um pouco mais suave */
+    color: #343a40;
 }
 
 .container {
     max-width: 1200px;
-    margin: 30px auto; /* Aumenta a margem superior para dar mais respiro */
-    padding: 0 20px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-.section-title {
+/* Cabeçalho */
+.header {
+    background-color: #c0392b;
+    color: white;
+    padding: 20px 0;
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 2em;
-    color: #555;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.header h1 { margin: 0; }
+
+/* Mensagem de Carregamento */
+.loading-message {
+    text-align: center;
+    font-size: 1.2em;
+    color: #6c757d;
+    padding: 40px;
 }
 
+/* Títulos das Categorias */
+.category-title {
+    font-size: 2em;
+    color: #2c3e50;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+/* Grade de Produtos */
 .product-grid {
     display: grid;
-    /* Cria colunas flexíveis, cada uma com no mínimo 280px e no máximo 1 fração do espaço */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px; /* Espaçamento entre os cards */
+    gap: 25px;
 }
 
+/* Card de Produto Individual */
 .product-card {
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra mais pronunciada */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s ease-in-out; /* Efeito suave ao passar o mouse */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .product-card:hover {
-    transform: translateY(-5px); /* Eleva o card levemente */
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
 }
 
 .product-card img {
     width: 100%;
-    height: 200px; /* Altura fixa para as imagens */
-    object-fit: cover; /* Garante que a imagem cubra a área sem distorcer */
+    height: 200px;
+    object-fit: cover;
 }
 
 .product-info {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* Faz esta área crescer para ocupar o espaço disponível */
+    flex-grow: 1;
 }
 
 .product-info h3 {
@@ -72,40 +83,46 @@ body {
 
 .product-info .description {
     font-size: 0.9em;
-    color: #666;
-    line-height: 1.5; /* Melhora a legibilidade da descrição */
-    flex-grow: 1; /* Empurra o preço e o botão para baixo */
+    color: #6c757d;
+    line-height: 1.5;
+    flex-grow: 1;
     margin-bottom: 15px;
 }
 
-.product-info .price {
+.price-add-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; /* Empurra para o fundo do card */
+}
+
+.price {
     font-size: 1.4em;
     font-weight: bold;
-    color: #27ae60; /* Verde para o preço */
-    margin-bottom: 15px;
+    color: #27ae60;
 }
 
 .add-to-cart-btn {
     background-color: #2ecc71;
     color: white;
     border: none;
-    padding: 12px;
+    padding: 10px 18px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1em;
     font-weight: bold;
-    text-transform: uppercase;
     transition: background-color 0.3s;
 }
 
 .add-to-cart-btn:hover {
-    background-color: #27ae60; /* Cor mais escura no hover */
+    background-color: #27ae60;
 }
 
+/* Rodapé */
 .footer {
     text-align: center;
     padding: 20px;
     margin-top: 40px;
-    background-color: #333;
+    background-color: #343a40;
     color: white;
 }
