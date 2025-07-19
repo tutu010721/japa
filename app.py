@@ -1,78 +1,46 @@
-// static/script.js
+# app.py - CÓDIGO CORRETO PARA O BACKEND
+from flask import Flask, jsonify
+from flask_cors import CORS
 
-// Espera o HTML da página ser completamente carregado para então executar o script.
-document.addEventListener('DOMContentLoaded', () => {
+app = Flask(__name__)
+# Habilita o CORS para permitir que nosso frontend acesse esta API
+CORS(app)
 
-    // --- PONTO CRÍTICO ---
-    // A URL da nossa API, agora apontando para o seu domínio de produção no Render.
-    const apiUrl = 'https://api.deliverypronto.shop/api/produtos';
-    // -------------------
-
-    // Pega o elemento da grade de produtos onde vamos inserir os cards.
-    const productGrid = document.getElementById('product-grid');
-
-    // Função assíncrona para buscar os produtos da API.
-    async function fetchProdutos() {
-        // Exibe uma mensagem de carregamento enquanto busca os dados.
-        productGrid.innerHTML = '<p>Carregando cardápio, por favor aguarde...</p>';
-
-        try {
-            // Tenta fazer a requisição para a nossa API usando o fetch.
-            const response = await fetch(apiUrl);
-            
-            // Se a resposta não for bem-sucedida (ex: erro 404 ou 500), lança um erro.
-            if (!response.ok) {
-                throw new Error(`Erro na rede: ${response.statusText}`);
-            }
-            
-            // Converte a resposta da API (que está em formato JSON) para um objeto JavaScript.
-            const produtos = await response.json();
-
-            // Se a busca for bem-sucedida, chama a função para exibir os produtos na tela.
-            displayProdutos(produtos);
-
-        } catch (error) {
-            // Se qualquer parte do 'try' falhar, captura o erro aqui.
-            console.error('Falha ao buscar produtos:', error);
-            // Exibe uma mensagem de erro amigável para o usuário.
-            productGrid.innerHTML = '<p>Não foi possível carregar o cardápio. Tente novamente mais tarde.</p>';
-        }
+# Lista de produtos de exemplo
+produtos_exemplo = [
+    {
+        "id": 1,
+        "nome": "Combinado Salmão (15 peças)",
+        "descricao": "5 sashimis, 4 uramakis, 4 hossomakis e 2 niguiris.",
+        "preco": "35.90",
+        "imagem": "https://i.imgur.com/k2Ah32D.png"
+    },
+    {
+        "id": 2,
+        "nome": "Temaki Salmão Completo",
+        "descricao": "Salmão, cream cheese e cebolinha.",
+        "preco": "28.00",
+        "imagem": "https://i.imgur.com/k2Ah32D.png"
+    },
+    {
+        "id": 3,
+        "nome": "Yakisoba de Carne",
+        "descricao": "Macarrão, legumes frescos e pedaços de carne.",
+        "preco": "32.50",
+        "imagem": "https://i.imgur.com/k2Ah32D.png"
     }
+]
 
-    // Função para exibir os produtos na tela, recebendo a lista de produtos como argumento.
-    function displayProdutos(produtos) {
-        // Primeiro, limpa qualquer conteúdo que já estivesse na grade (como a mensagem de "carregando").
-        productGrid.innerHTML = '';
+# Rota de API que retorna a lista de produtos em formato JSON
+@app.route('/api/produtos')
+def get_produtos():
+    return jsonify(produtos_exemplo)
 
-        // Se a lista de produtos estiver vazia, exibe uma mensagem.
-        if (produtos.length === 0) {
-            productGrid.innerHTML = '<p>Nenhum produto encontrado no momento.</p>';
-            return;
-        }
+# Rota principal para um teste rápido
+@app.route('/')
+def home():
+    return "<h1>API do Delivery Rodando!</h1><p>Acesse /api/produtos para ver os dados.</p>"
 
-        // Para cada produto na lista, cria o HTML do card correspondente.
-        produtos.forEach(produto => {
-            // Cria um novo elemento <div> para o card.
-            const card = document.createElement('div');
-            // Adiciona a classe CSS 'product-card' para aplicar os estilos.
-            card.className = 'product-card';
-            
-            // Define o HTML interno do card usando os dados do produto.
-            card.innerHTML = `
-                <img src="${produto.imagem}" alt="${produto.nome}">
-                <div class="product-info">
-                    <h3>${produto.nome}</h3>
-                    <p class="description">${produto.descricao}</p>
-                    <p class="price">R$ ${produto.preco}</p>
-                    <button class="add-to-cart-btn">Adicionar</button>
-                </div>
-            `;
-            
-            // Adiciona o card recém-criado à grade de produtos na página.
-            productGrid.appendChild(card);
-        });
-    }
-
-    // Finalmente, chama a função principal para iniciar todo o processo.
-    fetchProdutos();
-});
+# Esta parte não é necessária para o Render, mas não causa problema
+if __name__ == '__main__':
+    app.run(debug=True)
