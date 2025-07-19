@@ -1,71 +1,136 @@
+/* Importa a família de fontes do Google Fonts para se parecer com o original */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
+
+/* Variáveis de Cor para fácil manutenção */
+:root {
+    --primary-red: #d9272d;
+    --text-dark: #333333;
+    --text-light: #767676;
+    --background-light: #f7f7f7;
+    --green-price: #00b374;
+    --border-color: #eeeeee;
+}
+
 /* Estilos Gerais */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Nunito', sans-serif; /* Aplica a nova fonte */
     margin: 0;
-    background-color: #f8f9fa; /* Um branco um pouco mais suave */
-    color: #343a40;
+    background-color: var(--background-light);
+    color: var(--text-dark);
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1080px; /* Largura do container principal do site de referência */
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 15px; /* Padding lateral */
 }
 
-/* Cabeçalho */
-.header {
-    background-color: #c0392b;
-    color: white;
-    padding: 20px 0;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* --- Novo Cabeçalho --- */
+.store-header {
+    margin-bottom: 80px; /* Espaço para o logo "flutuar" para baixo */
 }
-.header h1 { margin: 0; }
 
-/* Mensagem de Carregamento */
-.loading-message {
-    text-align: center;
-    font-size: 1.2em;
-    color: #6c757d;
-    padding: 40px;
+.header-banner {
+    width: 100%;
+    height: 160px; /* Altura do banner */
+    background-color: var(--primary-red);
 }
+
+.header-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
+}
+
+.header-details {
+    display: flex;
+    align-items: flex-end; /* Alinha os itens na base */
+    position: relative;
+    top: -60px; /* Puxa todo o bloco para cima, sobre o banner */
+}
+
+.store-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    background-color: white;
+}
+
+.store-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.store-info {
+    margin-left: 20px;
+    padding-bottom: 10px;
+}
+
+.store-info h1 {
+    margin: 0 0 5px 0;
+    font-size: 2em;
+    font-weight: 800; /* Mais pesado */
+}
+
+.store-info .store-status {
+    margin: 0;
+    color: var(--text-light);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.store-status .status-open {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--green-price);
+    border-radius: 50%;
+    margin-right: 8px;
+}
+/* --- Fim do Novo Cabeçalho --- */
+
 
 /* Títulos das Categorias */
 .category-title {
-    font-size: 2em;
-    color: #2c3e50;
+    font-size: 1.8em;
+    font-weight: 800;
+    color: var(--text-dark);
     margin-top: 40px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 10px;
+    margin-bottom: 25px;
 }
 
 /* Grade de Produtos */
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
 }
 
 /* Card de Produto Individual */
 .product-card {
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
 }
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 .product-card img {
     width: 100%;
-    height: 200px;
+    height: 220px;
     object-fit: cover;
 }
 
@@ -78,13 +143,14 @@ body {
 
 .product-info h3 {
     margin: 0 0 10px 0;
-    font-size: 1.2em;
+    font-size: 1.1em;
+    font-weight: 700;
 }
 
 .product-info .description {
     font-size: 0.9em;
-    color: #6c757d;
-    line-height: 1.5;
+    color: var(--text-light);
+    line-height: 1.6;
     flex-grow: 1;
     margin-bottom: 15px;
 }
@@ -93,36 +159,37 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto; /* Empurra para o fundo do card */
+    margin-top: auto;
 }
 
 .price {
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #27ae60;
+    font-size: 1.3em;
+    font-weight: 800;
+    color: var(--green-price);
 }
 
 .add-to-cart-btn {
-    background-color: #2ecc71;
+    background-color: var(--primary-red);
     color: white;
     border: none;
     padding: 10px 18px;
-    border-radius: 5px;
+    border-radius: 20px; /* Mais arredondado */
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.9em;
     font-weight: bold;
     transition: background-color 0.3s;
 }
 
 .add-to-cart-btn:hover {
-    background-color: #27ae60;
+    opacity: 0.9;
 }
+
 
 /* Rodapé */
 .footer {
     text-align: center;
-    padding: 20px;
-    margin-top: 40px;
-    background-color: #343a40;
-    color: white;
+    padding: 30px 20px;
+    margin-top: 60px;
+    background-color: #e9ecef;
+    color: #6c757d;
 }
