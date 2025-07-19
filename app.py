@@ -1,10 +1,10 @@
-# app.py - Versão com rota para o Painel de Administração
+# app.py - VERSÃO FINAL E SEGURA
 import os
-from flask import Flask, jsonify, request, render_template # Adicionado render_template
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_httpauth import HTTPBasicAuth # Importa a biblioteca de autenticação
 
-# ... (toda a configuração e modelo do banco de dados continuam iguais) ...
 # --- CONFIGURAÇÃO ---
 app = Flask(__name__)
 CORS(app)
@@ -12,9 +12,25 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+auth = HTTPBasicAuth() # Cria uma instância do objeto de autenticação
 
-# --- MODELO ---
+# --- CREDENCIAIS DE ADMIN ---
+# Pega o usuário e senha das variáveis de ambiente que configuramos no Render
+users = {
+    os.environ.get('ADMIN_USERNAME'): os.environ.get('ADMIN_PASSWORD')
+}
+
+# --- FUNÇÃO DE VERIFICAÇÃO DE SENHA ---
+@auth.verify_password
+def verify_password(username, password):
+    # Esta função é chamada pelo @auth.login_required
+    # Ela verifica se o usuário existe e se a senha está correta
+    if username in users and users[username] == password:
+        return username
+
+# --- MODELO DO BANCO DE DADOS (não muda) ---
 class Produto(db.Model):
+    # ... (o modelo continua o mesmo)
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(200))
@@ -22,10 +38,10 @@ class Produto(db.Model):
     imagem = db.Column(db.String(200))
     def to_dict(self):
         return {'id': self.id, 'nome': self.nome, 'descricao': self.descricao, 'preco': self.preco, 'imagem': self.imagem}
-# --------------------------------------------------------------------------
 
-# --- ROTAS DA API (não mudam) ---
+# --- ROTAS DA API (não mudam, continuam públicas) ---
 @app.route('/api/produtos', methods=['GET', 'POST'])
+# ... (a função gerenciar_produtos continua a mesma)
 def gerenciar_produtos():
     if request.method == 'GET':
         produtos_db = Produto.query.all()
@@ -38,6 +54,7 @@ def gerenciar_produtos():
         return jsonify(novo_produto.to_dict()), 201
 
 @app.route('/api/produtos/<int:produto_id>', methods=['GET', 'PUT', 'DELETE'])
+# ... (a função gerenciar_produto_especifico continua a mesma)
 def gerenciar_produto_especifico(produto_id):
     produto = Produto.query.get_or_404(produto_id)
     if request.method == 'GET':
@@ -60,13 +77,12 @@ def gerenciar_produto_especifico(produto_id):
 def home():
     return "<h1>API do Delivery - CRUD Completo</h1><p>Acesse <a href='/admin'>/admin</a> para gerenciar os produtos.</p>"
 
-# --- NOVA ROTA PARA O PAINEL DE ADMINISTRAÇÃO ---
+# --- ROTA DO PAINEL DE ADMINISTRAÇÃO (AGORA PROTEGIDA) ---
 @app.route('/admin')
+@auth.login_required # <-- A MÁGICA ACONTECE AQUI!
 def admin_panel():
-    # Esta função simplesmente renderiza e retorna o nosso arquivo admin.html
-    # Por enquanto, está aberto a todos. Adicionaremos segurança depois.
+    # Esta função só será executada se o usuário passar pela verificação do @auth.login_required
     return render_template('admin.html')
-# ----------------------------------------------------
 
 # --- SETUP DO BANCO DE DADOS (não muda) ---
 def setup_database(app):
@@ -81,7 +97,6 @@ def setup_database(app):
             ]
             db.session.bulk_save_objects(produtos_iniciais)
             db.session.commit()
-
 setup_database(app)
 
 if __name__ == '__main__':
