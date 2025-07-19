@@ -1,4 +1,4 @@
-# app.py - Versão FINAL com CRUD completo (Create, Read, Update, Delete)
+# app.py - Versão FINAL MESMO com CRUD 100% Completo (GET, POST, PUT, DELETE)
 import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -23,7 +23,7 @@ class Produto(db.Model):
     def to_dict(self):
         return {'id': self.id, 'nome': self.nome, 'descricao': self.descricao, 'preco': self.preco, 'imagem': self.imagem}
 
-# --- ROTA UNIFICADA PARA LISTAR (GET) E CRIAR (POST) ---
+# --- ROTA PARA LISTAR TODOS (GET) E CRIAR (POST) ---
 @app.route('/api/produtos', methods=['GET', 'POST'])
 def gerenciar_produtos():
     if request.method == 'GET':
@@ -37,17 +37,19 @@ def gerenciar_produtos():
         db.session.commit()
         return jsonify(novo_produto.to_dict()), 201
 
-# --- NOVAS ROTAS PARA EDITAR (PUT) E EXCLUIR (DELETE) UM PRODUTO ESPECÍFICO ---
-
-@app.route('/api/produtos/<int:produto_id>', methods=['PUT', 'DELETE'])
+# --- ROTA PARA GERENCIAR UM PRODUTO ESPECÍFICO (GET, PUT, DELETE) ---
+# ESTA É A ROTA QUE FOI CORRIGIDA
+@app.route('/api/produtos/<int:produto_id>', methods=['GET', 'PUT', 'DELETE'])
 def gerenciar_produto_especifico(produto_id):
-    # Tenta encontrar o produto pelo ID. Se não encontrar, retorna erro 404 (Não Encontrado) automaticamente.
     produto = Produto.query.get_or_404(produto_id)
+
+    # Se o método for GET, apenas retorna o produto encontrado
+    if request.method == 'GET':
+        return jsonify(produto.to_dict())
 
     # Se o método for PUT, atualiza o produto
     if request.method == 'PUT':
         dados = request.get_json()
-        # Atualiza os campos do produto com os dados recebidos. Se um dado não for enviado, mantém o valor antigo.
         produto.nome = dados.get('nome', produto.nome)
         produto.descricao = dados.get('descricao', produto.descricao)
         produto.preco = dados.get('preco', produto.preco)
