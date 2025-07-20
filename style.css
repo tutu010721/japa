@@ -1,7 +1,7 @@
-/* Importa a família de fontes do Google Fonts para se parecer com o original */
+/* Importa a família de fontes do Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
 
-/* Variáveis de Cor para fácil manutenção */
+/* Variáveis de Cor */
 :root {
     --primary-red: #d9272d;
     --text-dark: #333333;
@@ -13,183 +13,99 @@
 
 /* Estilos Gerais */
 body {
-    font-family: 'Nunito', sans-serif; /* Aplica a nova fonte */
+    font-family: 'Nunito', sans-serif;
     margin: 0;
     background-color: var(--background-light);
     color: var(--text-dark);
 }
 
 .container {
-    max-width: 1080px; /* Largura do container principal do site de referência */
+    max-width: 1080px;
     margin: 0 auto;
-    padding: 0 15px; /* Padding lateral */
+    padding: 0 15px;
 }
 
-/* --- Novo Cabeçalho --- */
-.store-header {
-    margin-bottom: 80px; /* Espaço para o logo "flutuar" para baixo */
-}
-
-.header-banner {
-    width: 100%;
-    height: 160px; /* Altura do banner */
-    background-color: var(--primary-red);
-}
-
-.header-banner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
-}
-
-.header-details {
-    display: flex;
-    align-items: flex-end; /* Alinha os itens na base */
-    position: relative;
-    top: -60px; /* Puxa todo o bloco para cima, sobre o banner */
-}
-
-.store-logo {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 4px solid white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-    background-color: white;
-}
-
-.store-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.store-info {
-    margin-left: 20px;
-    padding-bottom: 10px;
-}
-
-.store-info h1 {
-    margin: 0 0 5px 0;
-    font-size: 2em;
-    font-weight: 800; /* Mais pesado */
-}
-
-.store-info .store-status {
-    margin: 0;
-    color: var(--text-light);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-}
-
-.store-status .status-open {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background-color: var(--green-price);
-    border-radius: 50%;
-    margin-right: 8px;
-}
-/* --- Fim do Novo Cabeçalho --- */
-
+/* Cabeçalho */
+.store-header { margin-bottom: 80px; }
+.header-banner { width: 100%; height: 160px; background-color: var(--primary-red); }
+.header-banner img { width: 100%; height: 100%; object-fit: cover; }
+.header-details { display: flex; align-items: flex-end; position: relative; top: -60px; }
+.store-logo { width: 120px; height: 120px; border-radius: 50%; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; background-color: white; }
+.store-logo img { width: 100%; height: 100%; object-fit: cover; }
+.store-info { margin-left: 20px; padding-bottom: 10px; }
+.store-info h1 { margin: 0 0 5px 0; font-size: 2em; font-weight: 800; }
+.store-info .store-status { margin: 0; color: var(--text-light); font-weight: 700; display: flex; align-items: center; }
+.store-status .status-open { display: inline-block; width: 8px; height: 8px; background-color: var(--green-price); border-radius: 50%; margin-right: 8px; }
 
 /* Títulos das Categorias */
-.category-title {
-    font-size: 1.8em;
-    font-weight: 800;
-    color: var(--text-dark);
-    margin-top: 40px;
-    margin-bottom: 25px;
-}
+.category-title { font-size: 1.8em; font-weight: 800; color: var(--text-dark); margin-top: 40px; margin-bottom: 25px; }
 
 /* Grade de Produtos */
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 30px;
-}
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
 
-/* Card de Produto Individual */
+/* --- ATUALIZAÇÃO DO CARD DE PRODUTO NA HOME --- */
 .product-card {
     background-color: white;
     border-radius: 8px;
     border: 1px solid var(--border-color);
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex; /* Alinha imagem e info lado a lado */
+    transition: box-shadow 0.2s ease-in-out;
     cursor: pointer;
 }
+.product-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
 
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+.product-card .product-image {
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0; /* Impede a imagem de encolher */
 }
+.product-card .product-image img { width: 100%; height: 100%; object-fit: cover; }
 
-.product-card img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
+.product-card .product-info { padding: 15px; }
+.product-card .product-info h3 { margin: 0 0 5px 0; font-size: 1.1em; font-weight: 700; }
+.product-card .product-info .description {
+    font-size: 0.9em; color: var(--text-light); line-height: 1.5;
+    /* Truque para limitar a 3 linhas */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
+.product-card .price { font-size: 1.2em; font-weight: 800; color: var(--text-dark); margin-top: 10px; }
+/* --- FIM DA ATUALIZAÇÃO DO CARD --- */
 
-.product-info {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+/* --- NOVOS ESTILOS PARA O MODAL DE DETALHES --- */
+.modal {
+    display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center; align-items: center;
 }
+.modal-content {
+    background-color: #fefefe; border-radius: 8px; width: 90%; max-width: 700px;
+    max-height: 90vh; display: flex; flex-direction: column;
+}
+.close-btn { color: #aaa; position: absolute; top: 15px; right: 25px; font-size: 35px; font-weight: bold; cursor: pointer; }
+.close-btn:hover { color: black; }
 
-.product-info h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.1em;
-    font-weight: 700;
+#modal-body { overflow-y: auto; }
+.modal-image { width: 100%; height: 300px; object-fit: cover; }
+.modal-info { padding: 30px; }
+.modal-info h2 { font-size: 2em; margin: 0 0 15px 0; font-weight: 800; }
+.modal-info .description { font-size: 1em; line-height: 1.7; color: var(--text-light); margin-bottom: 30px; }
+.modal-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 30px; background-color: #f9f9f9; border-top: 1px solid var(--border-color);
 }
-
-.product-info .description {
-    font-size: 0.9em;
-    color: var(--text-light);
-    line-height: 1.6;
-    flex-grow: 1;
-    margin-bottom: 15px;
+.modal-price { font-size: 1.8em; font-weight: 800; color: var(--text-dark); }
+.modal-add-btn {
+    background-color: var(--primary-red); color: white; border: none; padding: 15px 30px;
+    border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: opacity 0.3s;
 }
-
-.price-add-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-}
-
-.price {
-    font-size: 1.3em;
-    font-weight: 800;
-    color: var(--green-price);
-}
-
-.add-to-cart-btn {
-    background-color: var(--primary-red);
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 20px; /* Mais arredondado */
-    cursor: pointer;
-    font-size: 0.9em;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-.add-to-cart-btn:hover {
-    opacity: 0.9;
-}
+.modal-add-btn:hover { opacity: 0.9; }
+/* --- FIM DOS ESTILOS DO MODAL --- */
 
 
 /* Rodapé */
-.footer {
-    text-align: center;
-    padding: 30px 20px;
-    margin-top: 60px;
-    background-color: #e9ecef;
-    color: #6c757d;
-}
+.footer { text-align: center; padding: 30px 20px; margin-top: 60px; background-color: #e9ecef; color: #6c757d; }
