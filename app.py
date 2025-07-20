@@ -1,34 +1,36 @@
-# app.py - Versão FINAL com correção de CORS para produção
+# app.py - Versão FINAL com Disco Persistente
 import os
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 
-# --- CONFIGURAÇÃO ---
 app = Flask(__name__)
 
-# --- CORREÇÃO DE CORS ---
-# Em vez de um CORS genérico, especificamos quais "origens" (sites) podem acessar nossa API.
-# Adicionamos tanto o seu domínio principal quanto o com "www" por segurança.
-origins = [
-    "https://deliverypronto.shop",
-    "https://www.deliverypronto.shop"
-]
+# --- CONFIGURAÇÃO DE CORS (não muda) ---
+origins = ["https://deliverypronto.shop", "https://www.deliverypronto.shop"]
 CORS(app, resources={r"/api/*": {"origins": origins}})
-# -------------------------
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
+# --- NOVA CONFIGURAÇÃO DO BANCO DE DADOS ---
+# Define a pasta do nosso disco persistente. '/var/data' é o caminho que configuramos no Render.
+DATA_DIR = '/var/data'
+# Garante que o diretório exista.
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR)
+
+# Aponta o SQLAlchemy para criar o arquivo database.db dentro do nosso disco persistente.
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(DATA_DIR, 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# ----------------------------------------------
+
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
 
-# --- CREDENCIAIS DE ADMIN ---
+# --- CREDENCIAIS E AUTENTICAÇÃO (não muda) ---
 users = { os.environ.get('ADMIN_USERNAME'): os.environ.get('ADMIN_PASSWORD') }
 @auth.verify_password
 def verify_password(username, password):
-    if username in users and users[username] == password:
+    if username in users and users.get(username) == password:
         return username
 
 # --- MODELOS DE BANCO DE DADOS (não muda) ---
@@ -52,7 +54,6 @@ class Produto(db.Model):
 # --- ROTAS DA API (não mudam) ---
 @app.route('/api/categorias', methods=['GET', 'POST'])
 def gerenciar_categorias():
-    # ... (código existente)
     if request.method == 'GET':
         categorias = Categoria.query.all()
         return jsonify([c.to_dict() for c in categorias])
@@ -65,7 +66,6 @@ def gerenciar_categorias():
 
 @app.route('/api/produtos', methods=['GET', 'POST'])
 def gerenciar_produtos():
-    # ... (código existente)
     if request.method == 'GET':
         categorias = Categoria.query.order_by(Categoria.id).all()
         resultado = []
@@ -87,7 +87,6 @@ def gerenciar_produtos():
 
 @app.route('/api/produtos/<int:produto_id>', methods=['GET', 'PUT', 'DELETE'])
 def gerenciar_produto_especifico(produto_id):
-    # ... (código existente)
     produto = Produto.query.get_or_404(produto_id)
     if request.method == 'GET':
         return jsonify(produto.to_dict())
@@ -108,19 +107,16 @@ def gerenciar_produto_especifico(produto_id):
 # --- ROTAS DAS PÁGINAS (não mudam) ---
 @app.route('/')
 def home():
-    return "<h1>API do Delivery - CRUD Completo</h1><p>Acesse <a href='/admin'>/admin</a> para gerenciar os produtos.</p>"
+    return "<h1>API do Delivery - PRONTA PARA PRODUÇÃO</h1><p>Acesse <a href='/admin'>/admin</a> para gerenciar os produtos.</p>"
 
 @app.route('/admin')
 @auth.login_required
 def admin_panel():
     return render_template('admin.html')
 
-# --- SETUP DO BANCO DE DADOS (não muda) ---
-def setup_database(app):
-    with app.app_context():
-        db.create_all()
-
-setup_database(app)
+# --- SETUP SEGURO DO BANCO DE DADOS (não muda) ---
+with app.app_context():
+    db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)
