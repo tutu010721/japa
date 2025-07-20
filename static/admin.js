@@ -1,48 +1,64 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const apiUrl = '/api/produtos';
+    // As URLs da nossa API. A de categorias será útil no futuro.
+    const apiUrlProdutos = '/api/produtos';
+    const apiUrlCategorias = '/api/categorias';
+
     const productList = document.getElementById('product-list');
     const addProductForm = document.getElementById('add-product-form');
-
-    // --- NOVOS ELEMENTOS DO MODAL DE EDIÇÃO ---
     const editModal = document.getElementById('edit-modal');
     const editProductForm = document.getElementById('edit-product-form');
     const closeModalBtn = document.querySelector('.close-btn');
 
-    // Função para carregar e exibir os produtos na tabela (sem alterações)
+    // --- FUNÇÃO ATUALIZADA PARA LER A NOVA ESTRUTURA DA API ---
     async function loadProducts() {
         try {
-            const response = await fetch(apiUrl);
-            const products = await response.json();
+            const response = await fetch(apiUrlProdutos);
+            // A API agora retorna uma lista de categorias
+            const categories = await response.json();
             
-            productList.innerHTML = '';
+            productList.innerHTML = ''; // Limpa a tabela
             
-            products.forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.id}</td>
-                    <td>${product.nome}</td>
-                    <td>R$ ${product.preco.toFixed(2)}</td>
-                    <td class="actions">
-                        <button class="edit-btn" data-id="${product.id}">Editar</button>
-                        <button class="delete-btn" data-id="${product.id}">Excluir</button>
-                    </td>
-                `;
-                productList.appendChild(row);
+            // Loop 1: Passa por cada CATEGORIA na lista
+            categories.forEach(category => {
+                // Loop 2: Passa por cada PRODUTO dentro da categoria atual
+                category.produtos.forEach(product => {
+                    // O código para criar a linha da tabela é o mesmo de antes!
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${product.nome}</td>
+                        <td>R$ ${product.preco.toFixed(2).replace('.', ',')}</td>
+                        <td class="actions">
+                            <button class="edit-btn" data-id="${product.id}">Editar</button>
+                            <button class="delete-btn" data-id="${product.id}">Excluir</button>
+                        </td>
+                    `;
+                    productList.appendChild(row);
+                });
             });
-        } catch (error) { console.error('Erro ao carregar produtos:', error); }
+        } catch (error) { 
+            console.error('Erro ao carregar produtos:', error);
+            productList.innerHTML = '<tr><td colspan="4">Erro ao carregar produtos.</td></tr>';
+        }
     }
 
-    // Event listener para o formulário de adicionar produto (sem alterações)
+    // O restante do código não precisa de grandes mudanças, pois as rotas de POST, PUT e DELETE
+    // continuam operando em produtos individuais. Apenas precisamos garantir que a categoria seja tratada.
+    // Por enquanto, vamos manter a lógica de adicionar/editar e depois melhoramos o formulário.
+    
+    // Event listener para o formulário de adicionar produto (sem alterações por enquanto)
     addProductForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+        // AINDA PRECISAMOS ADICIONAR UM CAMPO DE CATEGORIA AQUI NO FUTURO
         const newProduct = {
             nome: document.getElementById('nome').value,
             descricao: document.getElementById('descricao').value,
             preco: parseFloat(document.getElementById('preco').value),
             imagem: document.getElementById('imagem').value,
+            categoria_id: 1 // Usando um ID fixo por enquanto. Vamos melhorar isso.
         };
         try {
-            await fetch(apiUrl, {
+            await fetch(apiUrlProdutos, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newProduct)
@@ -52,42 +68,38 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error('Erro ao adicionar produto:', error); }
     });
 
-    // --- LÓGICA ATUALIZADA PARA OS CLIQUES NA LISTA DE PRODUTOS ---
+    // Lógica para os cliques na lista (sem alterações)
     productList.addEventListener('click', async (event) => {
         const target = event.target;
         const productId = target.dataset.id;
 
-        // Se o botão clicado for o de EXCLUIR
         if (target.classList.contains('delete-btn')) {
             if (confirm(`Tem certeza que deseja excluir o produto ID ${productId}?`)) {
                 try {
-                    await fetch(`${apiUrl}/${productId}`, { method: 'DELETE' });
+                    await fetch(`${apiUrlProdutos}/${productId}`, { method: 'DELETE' });
                     loadProducts();
                 } catch (error) { console.error('Erro ao excluir produto:', error); }
             }
         }
 
-        // Se o botão clicado for o de EDITAR
         if (target.classList.contains('edit-btn')) {
             try {
-                // 1. Busca os dados atuais do produto na API
-                const response = await fetch(`${apiUrl}/${productId}`);
+                const response = await fetch(`${apiUrlProdutos}/${productId}`);
                 const product = await response.json();
-
-                // 2. Preenche o formulário do modal com os dados do produto
+                
                 document.getElementById('edit-id').value = product.id;
                 document.getElementById('edit-nome').value = product.nome;
                 document.getElementById('edit-descricao').value = product.descricao;
                 document.getElementById('edit-preco').value = product.preco;
                 document.getElementById('edit-imagem').value = product.imagem;
+                // PRECISAMOS ADICIONAR A CATEGORIA AQUI TBM
                 
-                // 3. Exibe o modal
                 editModal.style.display = 'block';
             } catch (error) { console.error('Erro ao buscar produto para edição:', error); }
         }
     });
 
-    // --- NOVA LÓGICA PARA SALVAR O FORMULÁRIO DE EDIÇÃO ---
+    // Lógica para salvar o formulário de edição (sem alterações por enquanto)
     editProductForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         
@@ -97,30 +109,23 @@ document.addEventListener('DOMContentLoaded', () => {
             descricao: document.getElementById('edit-descricao').value,
             preco: parseFloat(document.getElementById('edit-preco').value),
             imagem: document.getElementById('edit-imagem').value,
+            // PRECISAMOS ADICIONAR A CATEGORIA AQUI TBM
         };
 
         try {
-            await fetch(`${apiUrl}/${productId}`, {
+            await fetch(`${apiUrlProdutos}/${productId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedProduct)
             });
-            editModal.style.display = 'none'; // Esconde o modal
-            loadProducts(); // Recarrega a lista de produtos com os dados atualizados
+            editModal.style.display = 'none';
+            loadProducts();
         } catch (error) { console.error('Erro ao atualizar produto:', error); }
     });
 
-    // --- NOVA LÓGICA PARA FECHAR O MODAL ---
-    // Fecha ao clicar no 'X'
-    closeModalBtn.onclick = () => {
-        editModal.style.display = 'none';
-    }
-    // Fecha ao clicar fora do conteúdo do modal
-    window.onclick = (event) => {
-        if (event.target == editModal) {
-            editModal.style.display = 'none';
-        }
-    }
+    // Lógica para fechar o modal (sem alterações)
+    closeModalBtn.onclick = () => { editModal.style.display = 'none'; }
+    window.onclick = (event) => { if (event.target == editModal) { editModal.style.display = 'none'; } }
 
     // Carrega os produtos ao iniciar
     loadProducts();
